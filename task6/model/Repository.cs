@@ -11,14 +11,17 @@ using System.Runtime.CompilerServices;
 
 namespace task6.model
 {
-    class ItemsNote:INotifyPropertyChanged
+    /// <summary>
+    /// 
+    /// </summary>
+    class Repository:INotifyPropertyChanged
     {
-        public ItemsNote()
+        public Repository()
         {
             ComWithFile = new Communication();
             CreateDictionary();
         }
-        Dictionary<UInt32, ItemPerson> MyDictinary=new Dictionary<uint, ItemPerson>();
+        Dictionary<int, ItemPerson> MyDictinary=new Dictionary<int, ItemPerson>();
 
         public event PropertyChangedEventHandler PropertyChanged;
         ICommunication ComWithFile;
@@ -39,12 +42,12 @@ namespace task6.model
             }
 
         }
-        public Dictionary<UInt32, ItemPerson> GetDictinary()
+        public Dictionary<int, ItemPerson> GetDictinary()
         {
             return (MyDictinary);
         }
 
-        public bool RemoveItemFromDictinary(UInt32 i, string path=Settings.path)
+        public bool RemoveItemFromDictinary(int i, string path=Settings.path)
         {
             if (MyDictinary.ContainsKey(i))
             {
@@ -68,7 +71,7 @@ namespace task6.model
             Message = "The Dictinary already has the ID" + itPerson.ID.ToString();
             return (false);
         }
-        public bool IsContainID(UInt32 id)
+        public bool IsContainID(int id)
         {
             return(MyDictinary.ContainsKey(id));
         }
@@ -78,7 +81,7 @@ namespace task6.model
             if (String.IsNullOrEmpty(line))
                 throw new ArgumentNullException("Person can't be null");
             string[] s = line.Split('#');
-            UInt32 id = UInt32.Parse(s[0]);
+            int id = int.Parse(s[0]);
             DateTime dt = DateTime.Parse(s[1]);
             string fullName = s[2];
             int age = int.Parse(s[3]);
@@ -102,6 +105,11 @@ namespace task6.model
                 sbTmp.Append(sTmp + "\0");
             }
             return (sbTmp.ToString());
+        }
+
+        public ItemPerson GetItemPersonFromDictinary(int ID)
+        {
+            return (MyDictinary[ID]);
         }
         public void OnPropertyChanged([CallerMemberName]string PropertyName=null)
         {

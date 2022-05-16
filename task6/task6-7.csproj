@@ -46,14 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="model\Communication.cs" />
+    <Compile Include="VM\ControllerRepos.cs" />
     <Compile Include="model\ICommunication.cs" />
     <Compile Include="model\ItemPerson.cs" />
     <Compile Include="model\Person.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="model\ItemsNote.cs" />
+    <Compile Include="model\Repository.cs" />
     <Compile Include="Setiings.cs" />
-    <Compile Include="VM\ControllerNote.cs" />
+    <Compile Include="VM\ICommandConsole.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

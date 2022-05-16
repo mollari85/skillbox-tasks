@@ -17,7 +17,10 @@ namespace task6.model
                 int i = 0;
                 StringBuilder sbText = new StringBuilder();
             if (!File.Exists(path))
+            {
                 File.CreateText(path);
+                return (null);
+            }
                 using (StreamReader sr = new StreamReader(path, System.Text.Encoding.UTF8))
                 {                            
                     while (!sr.EndOfStream)
@@ -31,7 +34,8 @@ namespace task6.model
                         catch (Exception) { Message += $"String {i} is not readable \n\r"; }
                         finally { i++; }
                     }
-                sbText.Remove(sbText.Length-1, 1);
+                    if (sbText.Length>0)
+                         sbText.Remove(sbText.Length-1, 1);
                 }
             return (sbText.ToString());
             }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace task6.model
 {
+    /// <summary>
+    /// Person with all Properties belongs to person
+    /// </summary>
     class Person
     {
             string fullName;
