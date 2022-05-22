@@ -14,14 +14,14 @@ namespace task6.model
     /// <summary>
     /// 
     /// </summary>
-    class Repository:INotifyPropertyChanged
+    class EmployeeRepository:INotifyPropertyChanged
     {
-        public Repository()
+        public EmployeeRepository()
         {
             ComWithFile = new Communication();
-            CreateDictionary();
+            CreateRepository();
         }
-        Dictionary<int, ItemPerson> MyDictinary=new Dictionary<int, ItemPerson>();
+        List <ItemPerson> Repository=new List<ItemPerson>();
 
         public event PropertyChangedEventHandler PropertyChanged;
         ICommunication ComWithFile;
@@ -29,7 +29,7 @@ namespace task6.model
         private string message;
         public String Message { get { return (message); } set { message = value; OnPropertyChanged(); } }
         
-        private void CreateDictionary(string path=Settings.path)
+        private void CreateRepository(string path=Settings.path)
         {
             string sTmp=ComWithFile.ReadDataFromFile();
             if (String.IsNullOrEmpty(sTmp))
@@ -38,42 +38,58 @@ namespace task6.model
             foreach (var i in asTmp)
             {
                 ItemPerson itemPersonTmp = GetItemPersonFromString(i);
-                MyDictinary.Add(itemPersonTmp.ID, itemPersonTmp);
+                Repository.Add(itemPersonTmp);
             }
 
         }
-        public Dictionary<int, ItemPerson> GetDictinary()
+        public List<ItemPerson> GetAll()
         {
-            return (MyDictinary);
+            return (Repository);
         }
 
-        public bool RemoveItemFromDictinary(int i, string path=Settings.path)
+        public bool RemoveItemFromRepository(ItemPerson Person, string path = Settings.path)
         {
-            if (MyDictinary.ContainsKey(i))
+            
+            if (Repository.Contains(Person))
             {
-                MyDictinary.Remove(i);
-                string sTmp = GetTextFromDictinary();
+                Repository.Remove(Person);
+                string sTmp = GetTextFromRepository();
+                ComWithFile.WriteTextToFile(sTmp, false, path);
+                return (true);
+            }
+            return (false);
+
+        }
+//check it later
+        public bool RemoveItemFromRepository(int ID, string path=Settings.path)
+        {
+            ItemPerson personTmp=Repository.FirstOrDefault(i => i.ID == ID);
+            if (personTmp!=default)
+            {
+                Repository.Remove(personTmp);
+                string sTmp = GetTextFromRepository();
                 ComWithFile.WriteTextToFile(sTmp,false,path);
                 return (true);
             }
             return (false);
 
         }
-        public bool AddItemToDictinary(ItemPerson itPerson,string path=Settings.path)
+        public bool AddItemToRepository(ItemPerson itPerson,string path=Settings.path)
         {
-            if (!MyDictinary.ContainsKey(itPerson.ID))
+            if (!Repository.Contains(itPerson))
             {
-                MyDictinary.Add(itPerson.ID, itPerson);
+                Repository.Add(itPerson);
                 string sTmp = GetStringFromItemPerson(itPerson);
                 ComWithFile.WriteTextToFile(sTmp, true, path);
                 return (true);
             }
-            Message = "The Dictinary already has the ID" + itPerson.ID.ToString();
+            Message = "The Repository already has the ID" + itPerson.ID.ToString();
             return (false);
         }
-        public bool IsContainID(int id)
+        public bool IsContainID(int ID)
         {
-            return(MyDictinary.ContainsKey(id));
+            ItemPerson personTmp = Repository.FirstOrDefault(i => i.ID == ID);
+            return (Repository.Contains(personTmp));
         }
 
         private ItemPerson GetItemPersonFromString(string line)
@@ -96,20 +112,20 @@ namespace task6.model
                 "#" + p.BirthDay + "#" + p.PlaceOfBith;
             return (s);
         }
-        private string GetTextFromDictinary()
+        private string GetTextFromRepository()
         {
             StringBuilder sbTmp = new StringBuilder();
-            foreach(var i in MyDictinary)
+            foreach(var i in Repository)
             {
-                string sTmp = GetStringFromItemPerson(i.Value);
+                string sTmp = GetStringFromItemPerson(i);
                 sbTmp.Append(sTmp + "\0");
             }
             return (sbTmp.ToString());
         }
 
-        public ItemPerson GetItemPersonFromDictinary(int ID)
+        public ItemPerson GetItemPersonFromRepository(int ID)
         {
-            return (MyDictinary[ID]);
+            return (Repository[ID]);
         }
         public void OnPropertyChanged([CallerMemberName]string PropertyName=null)
         {

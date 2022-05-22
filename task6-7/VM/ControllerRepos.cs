@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using task6.model;
+using task6.Tools;
 
 
 namespace task6.VM
@@ -9,13 +10,16 @@ namespace task6.VM
     class ControllerRepos : ICommandConsole
     {
         const int idLen = 3, dTLen = 15, fIOLen = 15, ageLen = 4, heightLen = 7, birthLen = 10, placeOfBirthLen = 15;
-        Repository Note;
+        EmployeeRepository Note;
         //string Path { get; set; }
         //string Message { get; set; }
 
         public ControllerRepos()
         {
-            Note = new Repository();
+            Note = new EmployeeRepository();
+            ShowAllCommand = new RelayCommand(ShowAllInConsoleCommandTest);
+            ShowAllOrderedCommand = new RelayCommand(ShowAllInConsoleOrderedTest);
+            ShowAllInConsoleInRangeCommand = new RelayCommand(ShowAllConsoleInRangeTest);
 
         }
         private string TextHead()
@@ -32,26 +36,42 @@ namespace task6.VM
 
             return (result);
         }
+        public RelayCommand ShowAllCommand;
+        public RelayCommand ShowAllOrderedCommand;
+        public RelayCommand ShowAllInConsoleInRangeCommand;
         public string ShowAllInConsole()
         {
-            StringBuilder result = new StringBuilder();           
+            StringBuilder result = new StringBuilder();
             result.Append(TextHead());
-            foreach (var i in Note.GetDictinary())
+            foreach (var i in Note.GetAll())
             {
-                ItemPerson Person = i.Value as ItemPerson;
+                ItemPerson Person = i as ItemPerson;
                 result.Append(TextPerson(Person));
             }
-            
+
             return (result.ToString());
+        }
+        public void ShowAllInConsoleCommandTest(object o=null)
+        {
+            Console.WriteLine(ShowAllInConsole());
+        }
+        public void ShowAllInConsoleOrderedTest(object o = null)
+        {
+            Console.WriteLine(ShowAllInConsoleOrdered());
+        }
+        public string ShowAllConsoleInRangeTest(object TextStart, object TextEnd)
+        {
+            string result=ShowAllInConsoleInRange(TextStart.ToString(), TextEnd.ToString());
+            return (result);
         }
         public string ShowAllInConsoleOrdered()
         {
             StringBuilder result = new StringBuilder();
             result.Append(TextHead());
-            var OrderedNote = Note.GetDictinary().OrderByDescending(i => i.Value.CorrectionDateTime);
+            var OrderedNote = Note.GetAll().OrderByDescending(i => i.CorrectionDateTime).Reverse();
             foreach (var i in OrderedNote)
             {
-                ItemPerson Person = i.Value as ItemPerson;
+                ItemPerson Person = i as ItemPerson;
                 result.Append(TextPerson(Person));
             }
 
@@ -69,11 +89,11 @@ namespace task6.VM
         {
             StringBuilder result = new StringBuilder();
             result.Append(TextHead());
-            var RangeNote = Note.GetDictinary().Where(i => (i.Value.CorrectionDateTime>=StartDate)& 
-            i.Value.CorrectionDateTime<=EndDate);
+            var RangeNote = Note.GetAll().Where(i => (i.CorrectionDateTime>=StartDate)& 
+            i.CorrectionDateTime<=EndDate);
             foreach (var i in RangeNote)
             {
-                ItemPerson Person = i.Value as ItemPerson;
+                ItemPerson Person = i as ItemPerson;
                 result.Append(TextPerson(Person));
             }
 
@@ -110,7 +130,7 @@ namespace task6.VM
         }
         public void AddPerson()
         {
-            Note.AddItemToDictinary(new ItemPerson(FullName,Age.Value,Height.Value,BirthDay.Value,PlaceOfBirth,ID.Value,DateTime.Now));
+            Note.AddItemToRepository(new ItemPerson(FullName,Age.Value,Height.Value,BirthDay.Value,PlaceOfBirth,ID.Value,DateTime.Now));
         }
         public void RemoveAtPerson(string text)
         {
@@ -118,7 +138,7 @@ namespace task6.VM
                 throw new ArgumentException($"Text {text} doesn't look like ID");
             if (!Note.IsContainID(iD))           
                 throw new ArgumentException($"Dictionary doesn't contain ID={iD}");
-            Note.RemoveItemFromDictinary(iD);                      
+            Note.RemoveItemFromRepository(iD);                      
         }
         public void EditAtPerson(string text)
         {
@@ -244,7 +264,7 @@ namespace task6.VM
             {
                 throw new ArgumentException($"There is no person with ID={id.ToString()}");
             }
-            ItemPerson PersonTmp=Note.GetItemPersonFromDictinary(id);
+            ItemPerson PersonTmp=Note.GetItemPersonFromRepository(id);
             ID = PersonTmp.ID;
             CorrectionDateTime = PersonTmp.CorrectionDateTime;
             FullName =PersonTmp.FullName;

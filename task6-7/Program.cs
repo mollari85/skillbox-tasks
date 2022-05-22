@@ -18,11 +18,11 @@ namespace task6
             Console.WriteLine("it is the part 1 of the task");
             while (true)
             {
-                MainMenuSelection(ControlNote);
+                MainMenuSelection(ControlNote,ControlNote);
 
             }
         }
-        static void MainMenuSelection(ICommandConsole NoteCommand)
+        static void MainMenuSelection(ICommandConsole NoteCommand, ControllerRepos ControlRepos)
         {
             try
             {
@@ -46,7 +46,8 @@ namespace task6
                     case 1://Show
                         {
                             Console.Clear();
-                            Console.Write(NoteCommand.ShowAllInConsole());
+                            //Console.Write(NoteCommand.ShowAllInConsole());
+                            ControlRepos.ShowAllCommand.Execute(null);
                             Console.WriteLine("Press any key to go on");
                             Console.ReadLine();
                             Console.Clear();
@@ -128,7 +129,14 @@ namespace task6
                                 string textStartDate = Console.ReadLine();
                                 Console.WriteLine("Enter end date yyyy.mm.dd:");
                                 string textEndDate = Console.ReadLine();
-                                string result = NoteCommand.ShowAllInConsoleInRange(textStartDate, textEndDate);
+                                //released using Interfaces
+                                //string result = NoteCommand.ShowAllInConsoleInRange(textStartDate, textEndDate);
+                                //end released using Interfaces
+
+                                //release using RelayCommands
+                                string result=ControlRepos.ShowAllInConsoleInRangeCommand.Execute(textStartDate, textEndDate);
+                                //end release usign RelayCOmmands
+
                                 Console.WriteLine(result);
                                 Console.ReadLine();
                              }
@@ -138,8 +146,13 @@ namespace task6
                     case 6://Ordering
                         {
                             Console.Clear();
-                            string result=NoteCommand.ShowAllInConsoleOrdered();
-                            Console.WriteLine(result);
+                            //release with Interfaces
+                            //  string result=NoteCommand.ShowAllInConsoleOrdered();
+                            //  Console.WriteLine(result);
+                            //end release
+
+                            //release with RelayCommand
+                            ControlRepos.ShowAllOrderedCommand.Execute(null);
                             Console.ReadLine();
                         }
                         break;
@@ -152,12 +165,12 @@ namespace task6
                             Console.WriteLine("Selection is not correct");
                             Console.ReadLine();
                             Console.Clear();
-                            MainMenuSelection(NoteCommand);
+                            MainMenuSelection(NoteCommand,ControlRepos);
                         }
                         break;
                 }
             }
-            catch (Exception e) { Console.WriteLine(e.Message);Console.ReadLine(); Console.Clear(); MainMenuSelection(NoteCommand); }
+            catch (Exception e) { Console.WriteLine(e.Message);Console.ReadLine(); Console.Clear(); MainMenuSelection(NoteCommand,ControlRepos); }
 
 
         }
