@@ -46,7 +46,10 @@ namespace task6
                     case 1://Show
                         {
                             Console.Clear();
+                            //using Interfaces
                             //Console.Write(NoteCommand.ShowAllInConsole());
+                            // end using Interfaces
+                            // suing RelayCommand
                             ControlRepos.ShowAllCommand.Execute(null);
                             Console.WriteLine("Press any key to go on");
                             Console.ReadLine();
